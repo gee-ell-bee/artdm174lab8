@@ -80,7 +80,6 @@ async function getColors() {
     try {
         let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
         let data = await response.json();
-        // put one color on each box background
         for (let i = 0; i < boxes.length; i++) {
             let color = data[i].rgb;
             let box = boxes[i];
@@ -193,6 +192,12 @@ async function storeColors() {
     })
 } ());
 
+function ColorScheme(id, timestamp, firstColor, secondColor) {
+    this.id = id;
+    this.timestamp = timestamp;
+    this.firstColor = firstColor;
+    this.secondColor = secondColor;
+};
 
 
     /*function consoleLogger(h) {
