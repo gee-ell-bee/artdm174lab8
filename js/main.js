@@ -1,3 +1,5 @@
+// global variables
+const houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body]
@@ -33,7 +35,7 @@ async function getHouses() {
             html += objInfo;
         });
         
-        container.innerHTML = html;
+        houses.innerHTML = html;
     } catch(err) {
         console.log("Houses Err", err)
     };

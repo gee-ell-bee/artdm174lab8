@@ -65,6 +65,9 @@ main {
     height: 100%;
     padding: 3rem;
     background-color: rgba(0, 0, 0, .2);
+}
+
+section.houses {
     display: flex;
     grid-gap: 1rem;
 }
