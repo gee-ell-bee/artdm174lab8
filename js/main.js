@@ -3,6 +3,7 @@ let houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body]
+const newColorsBtn = document.getElementById("new");
 
 // initializing page
 document.addEventListener("DOMContentLoaded", init);
@@ -10,6 +11,8 @@ document.addEventListener("DOMContentLoaded", init);
 function init() {
     inputHouses();
     getColors();
+
+    newColorsBtn.addEventListener("click", getColors);
 }
 
 async function getHouses() {
