@@ -2,7 +2,7 @@
 let houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
-let boxes = [container, body]
+let boxes = [container, body];
 const newColorsBtn = document.getElementById("new");
 
 // initializing page
@@ -10,11 +10,12 @@ document.addEventListener("DOMContentLoaded", init);
 
 function init() {
     inputHouses();
-    getColors();
+    storeColors();
 
     newColorsBtn.addEventListener("click", getColors);
 }
 
+// get GoT data
 async function getHouses() {
     try {
         let response = await fetch("houses.json");
@@ -25,6 +26,7 @@ async function getHouses() {
     };
 };
 
+// apply GoT data to HTML
 async function inputHouses() {
     try {
         let housesData = await getHouses();
@@ -71,8 +73,6 @@ async function inputHouses() {
     };
 };
 
-
-
 async function getColors() {
     try {
         let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
@@ -83,10 +83,29 @@ async function getColors() {
             let box = boxes[i];
             box.style.backgroundColor = color;
         };
+        return data;
     } catch(err) {
         console.log("Color Error", err);
     };
 };
+
+async function storeColors() {
+    try {
+        let data = await getColors();
+        console.log(data);
+        let date = new Date();
+        let time = date.getTime();
+        
+    } catch(err) {
+        console.log("Storage Error", err);
+    }
+};
+
+function counter(e) {
+    if (typeof Storage !== "undefined"){
+        let 
+    };
+}
 
 
 /*
