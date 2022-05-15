@@ -78,7 +78,7 @@ async function inputHouses() {
 
 async function getColors() {
     try {
-        let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
+        let response = await fetch("storedvals.json"); //fetch("https://x-colors.herokuapp.com/api/random?number=2");
         let data = await response.json();
         // put one color on each box background
         for (let i = 0; i < boxes.length; i++) {
