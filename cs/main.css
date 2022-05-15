@@ -49,27 +49,19 @@ h6 {
     isolation: isolate;
 }
 
-#colorbg {
-    position: relative;
-    margin: 25vh auto auto auto;
-    z-index: -1;
-    width: 50vw;
-    height: fit-content;
-    background-color: rgba(0, 0, 0, .2);
-}
-
 main {
-    position: absolute;
-    z-index: 1;
-    width: 100%;
+    position: relative;
+    margin: 25vmin auto 10vmin auto;
+    z-index: -1;
+    width: 70vw;
     height: fit-content;
-    padding: 3rem;
+    padding: 5vw;
     background-color: rgba(0, 0, 0, .2);
 }
 
 section.houses {
     display: flex;
-    grid-gap: 1rem;
+    grid-gap: 2vw;
 }
 
 dl {
@@ -91,5 +83,64 @@ dt {
 section#buttons {
     padding: 2rem 0 0 0;
     display: flex;
+    flex-flow: row wrap;
+    grid-gap: 1vmin;
     justify-content: space-between;
+}
+
+button {
+    padding: 0 .5rem;
+}
+
+@media screen and (max-width: 1200px) {
+    section#buttons {
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 860px) {
+    body {
+        font-size: 18px;
+    }
+
+    section.houses {
+        flex-flow: column wrap;
+    }
+
+    dl {
+        display: flex;
+        justify-content: space-around;
+    }
+
+    dt {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5rem;
+        flex-basis: 100%;
+    }
+
+    dd {
+        display: flex;
+        text-align: center;
+        line-height: 1;
+        align-items: center;
+        flex-basis: 25%;
+        padding: .5vmin;
+    }
+}
+
+@media screen and (max-width: 625px) {
+
+    section.houses {
+        grid-gap: 5vmin;
+    }
+
+    dl {
+        display: block;
+    }
+
+    dd {
+        justify-content: center;
+    }
 }

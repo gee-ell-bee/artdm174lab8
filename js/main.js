@@ -4,16 +4,18 @@ const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body];
 const newColorsBtn = document.getElementById("new");
+const storeColorsBtn = document.getElementById("store");
 
 // initializing page
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
-    inputHouses();
-    storeColors();
+    //inputHouses();
+    getColors();
 
     newColorsBtn.addEventListener("click", getColors);
-}
+    storeColorsBtn.addEventListener("click", storeColors);
+};
 
 // get GoT data
 async function getHouses() {
@@ -34,8 +36,7 @@ async function inputHouses() {
         //create a temp holder to append all the html generated inside the forEach iterator
         let allHouses = new DocumentFragment;
 
-        //the argument "house" passed to the arrow function
-        //holds each item in the array in turn.fetch("houses.json")
+        // iterate through house data to create a house list
         housesData.forEach(house => {
             // create elements
             let houseList = document.createElement("dl");
@@ -64,10 +65,12 @@ async function inputHouses() {
             // add house to list
             allHouses.appendChild(houseList);
         });
+
         // reset section content
         houses.innerHTML = "";
         // add houses lists to section
         houses.appendChild(allHouses);
+
     } catch(err) {
         console.log("Input Error", err);
     };
@@ -78,7 +81,7 @@ async function getColors() {
         let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
         let data = await response.json();
         // put one color on each box background
-        for (let i=0; i < boxes.length; i++) {
+        for (let i = 0; i < boxes.length; i++) {
             let color = data[i].rgb;
             let box = boxes[i];
             box.style.backgroundColor = color;
@@ -93,21 +96,116 @@ async function storeColors() {
     try {
         let data = await getColors();
         console.log(data);
+        // check property and set value accordingly
+        if (typeof Storage !== "undefined") {
+            if (!currentColors) {
+                let currentColors = window.localStorage.setItem("currentColors", `bg${data[0].rgb}fg${data[1].rgb}`);
+            } else {
+                let previousColors = currentColors;
+                let currentColors = window.localStorage.setItem("currentColors", `bg${data[0].rgb}fg${data[1].rgb}`);
+            }
+            
+            
+            // render results to the DOM
+            document.getElementById("result").innerHTML =
+            `You have clicked the button ${sessionStorage.getItem('clickcount')} time(s).`;
+        } else {
+            alert("Sorry, your browser does not support web storage and so this button does not work");
+        };
+
         let date = new Date();
         let time = date.getTime();
-        
+        console.log(time);
+
     } catch(err) {
         console.log("Storage Error", err);
     }
 };
 
-function counter(e) {
-    if (typeof Storage !== "undefined"){
-        let 
+(async function () {
+    "use strict";
+    // DOM elements
+    
+    // new indexDB database
+    var gotDb = new Dexie("GoTDatabase");
+
+    // database schema/structure
+    gotDb.version(1).stores({
+        houses: `code, name, members`
+    });
+
+    await gotDb.houses.bulkPut([
+        { id: 1, code: "ST", name: "Stark", members: ["Eddard", "Catelyn", "Robb", "Sansa", "Arya", "Jon Snow"] },
+        { id: 2, code: "LA", name: "Lannister", members: ["Tywin", "Cersei", "Jaime", "Tyrion"]},
+        { id: 3, code: "BA", name: "Baratheon", members: ["Robert", "Stannis", "Renly"] },
+        { id: 4, code: "TA", name: "Targaryen", members: ["Aerys", "Daenerys", "Viserys"] }
+    ]);
+
+    await gotDb
+        .transaction("readwrite", gotDb.houses, async (tx) => {
+            let info = [];
+
+            info[0] = await gotDb.houses.toArray();
+            info[1] = await gotDb.houses.where("code").startsWithAnyOf("S", "B").toArray();
+            return info;
+    })
+    .then((results) => {
+        //temp holder for all the html generated inside the forEach iterator
+        let allHouses = new DocumentFragment;
+
+        // iterate through house data to create a house list
+        results[0].forEach((house) => {
+            // create elements
+            let houseList = document.createElement("dl");
+            let listTitle = document.createElement("dt");
+            // edit title content
+            listTitle.classList.add("house");
+            listTitle.innerHTML = house.name;
+            
+            // connect title to list
+            houseList.appendChild(listTitle);
+
+            // identify family members
+            let family = house.members;
+
+            //loop through family members
+            for (let member of family) {
+                // create list item (li)
+                let memberLI = document.createElement("dd");
+                // edit li content
+                memberLI.classList.add("member");
+                memberLI.innerHTML = member;
+                // add li to list
+                houseList.appendChild(memberLI);
+            };
+
+            // add house to list
+            allHouses.appendChild(houseList);
+        });
+
+        // reset section content
+        houses.innerHTML = "";
+        // add houses lists to section
+        houses.appendChild(allHouses);
+    })
+    .catch((err) => {
+        console.log("IIFE err" + err);
+    })
+} ());
+
+
+
+    /*function consoleLogger(h) {
+        for (let i = 0; i < h.length; i++) {
+            let house = h[i];
+            if (i != h.length -1) {
+                return `{ id: ${Number(i) + 1}, code: "${house.code}", name: "${house.name}", members: "${house.members}" }, `;
+            } else {
+                return `{ id: ${Number(i) + 1}, code: "${house.code}", name: "${house.name}", members: "${house.members}" }`;
+            };
+        };
     };
-}
-
-
+    console.log(data, consoleLogger(data));*/
 /*
 fetch("colors.json")
     .then((response) => response.json())
