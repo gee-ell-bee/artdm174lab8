@@ -1,5 +1,5 @@
 // global variables
-const houses = document.getElementById("got");
+let houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body]
@@ -8,7 +8,7 @@ let boxes = [container, body]
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
-    getHouses();
+    inputHouses();
     getColors();
 }
 
@@ -16,28 +16,55 @@ async function getHouses() {
     try {
         let response = await fetch("houses.json");
         let data = await response.json();
+        return data;
+    } catch(err) {
+        console.log("Retrieve Houses Err", err)
+    };
+};
+
+async function inputHouses() {
+    try {
+        let housesData = await getHouses();
 
         //create a temp holder to append all the html generated inside the forEach iterator
-        let html = "";
+        let allHouses = new DocumentFragment;
 
         //the argument "house" passed to the arrow function
         //holds each item in the array in turn.fetch("houses.json")
-        data.forEach(house => {
-            let family = house.members.join(", ");
+        housesData.forEach(house => {
+            // create elements
+            let houseList = document.createElement("dl");
+            let listTitle = document.createElement("dt");
+            // edit title content
+            listTitle.classList.add("house");
+            listTitle.innerHTML = house.name;
+            
+            // connect title to list
+            houseList.appendChild(listTitle);
 
-            // generate the html snippet for one array item
-            //to be added to the "html" temp holder.
-            let objInfo =
-            `<dl>
-                <dt class="house">${house.name}</dt>
-                <dd class="people">${family}</dd>
-            </dl>`;
-            html += objInfo;
+            // identify family members
+            let family = house.members;
+
+            //loop through family members
+            for (let member of family) {
+                // create list item (li)
+                let memberLI = document.createElement("dd");
+                // edit li content
+                memberLI.classList.add("member");
+                memberLI.innerHTML = member;
+                // add li to list
+                houseList.appendChild(memberLI);
+            };
+
+            // add house to list
+            allHouses.appendChild(houseList);
         });
-        
-        houses.innerHTML = html;
+        // reset section content
+        houses.innerHTML = "";
+        // add houses lists to section
+        houses.appendChild(allHouses);
     } catch(err) {
-        console.log("Houses Err", err)
+        console.log("Input Error", err);
     };
 };
 
