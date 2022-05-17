@@ -52,7 +52,6 @@ h6 {
 main {
     position: relative;
     margin: 25vmin auto 10vmin auto;
-    z-index: -1;
     width: 70vw;
     height: fit-content;
     padding: 5vw;
@@ -78,18 +77,6 @@ dt {
     
     text-decoration: underline;
     text-decoration-color: rgba(0, 0, 0, .4);
-}
-
-section#buttons {
-    padding: 2rem 0 0 0;
-    display: flex;
-    flex-flow: row wrap;
-    grid-gap: 1vmin;
-    justify-content: space-between;
-}
-
-button {
-    padding: 0 .5rem;
 }
 
 @media screen and (max-width: 1200px) {

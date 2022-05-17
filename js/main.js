@@ -3,6 +3,8 @@ let houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body];
+
+// color buttons
 const newColorsBtn = document.getElementById("new");
 const storeColorsBtn = document.getElementById("store");
 
@@ -11,10 +13,10 @@ document.addEventListener("DOMContentLoaded", init);
 
 function init() {
     //inputHouses();
-    getColors();
+    storeFetchedColors();
 
-    newColorsBtn.addEventListener("click", getColors);
-    storeColorsBtn.addEventListener("click", storeColors);
+    newColorsBtn.addEventListener("click", storeFetchedColors);
+    storeColorsBtn.addEventListener("click", storeFetchedColors);
 };
 
 // get GoT data
@@ -24,7 +26,7 @@ async function getHouses() {
         let data = await response.json();
         return data;
     } catch(err) {
-        console.log("Retrieve Houses Err", err)
+        console.log("Retrieve Houses Err", err);
     };
 };
 
@@ -81,71 +83,69 @@ async function getColors() {
         let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
         let data = await response.json();
         for (let i = 0; i < boxes.length; i++) {
-            let color = data[i].rgb;
+            let color = data[i].hex;
             let box = boxes[i];
             box.style.backgroundColor = color;
         };
-        return data;
+        const d = new Date();
+        let time = [d.getTime()];
+        let results = data.concat(time);
+        return results;
     } catch(err) {
         console.log("Color Error", err);
     };
 };
 
-async function storeColors() {
+async function storeFetchedColors() {
     try {
-        let data = await getColors();
-        console.log(data);
+        let colors = await getColors();
         // check property and set value accordingly
         if (typeof Storage !== "undefined") {
-            if (!currentColors) {
-                let currentColors = window.localStorage.setItem("currentColors", `bg${data[0].rgb}fg${data[1].rgb}`);
+            var fetchColors = window.localStorage.fetchColors;
+            var currentColors = window.localStorage.currentColors;
+            var previousColors = window.localStorage.previousColors;
+            if (typeof fetchColors == "undefined") {
+                // store these colors in local storage
+                window.localStorage.setItem("fetchColors", [0, colors[0].hex, colors[1].hex]);
+                window.localStorage.setItem("currentColors", [0, colors[0].hex, colors[1].hex]);
             } else {
-                let previousColors = currentColors;
-                let currentColors = window.localStorage.setItem("currentColors", `bg${data[0].rgb}fg${data[1].rgb}`);
-            }
-            
-            
-            // render results to the DOM
-            document.getElementById("result").innerHTML =
-            `You have clicked the button ${sessionStorage.getItem('clickcount')} time(s).`;
+                fetchColors = [0, colors[0].hex, colors[1].hex];
+                currentColors = [0, colors[0].hex, colors[1].hex];
+            };
+            console.log("fetch", fetchColors, "current", currentColors);
         } else {
-            alert("Sorry, your browser does not support web storage and so this button does not work");
+            document.getElementById("result").innerHTML = "Unfortunately your browser does not support web storage and so this button does not work";
         };
-
-        let date = new Date();
-        let time = date.getTime();
-        console.log(time);
-
+        console.log("CURRENT: ", currentColors, "PREV: ", previousColors);
     } catch(err) {
         console.log("Storage Error", err);
-    }
+    };
 };
 
+// GOT DATABASE INITIALIZER
 (async function () {
     "use strict";
-    // DOM elements
     
     // new indexDB database
-    var gotDb = new Dexie("GoTDatabase");
+    var gotdb = new Dexie("GoTDatabase");
 
     // database schema/structure
-    gotDb.version(1).stores({
-        houses: `code, name, members`
+    gotdb.version(1).stores({
+        houses: `++id, code, name, members`
     });
 
-    await gotDb.houses.bulkPut([
+    await gotdb.houses.bulkPut([
         { id: 1, code: "ST", name: "Stark", members: ["Eddard", "Catelyn", "Robb", "Sansa", "Arya", "Jon Snow"] },
         { id: 2, code: "LA", name: "Lannister", members: ["Tywin", "Cersei", "Jaime", "Tyrion"]},
         { id: 3, code: "BA", name: "Baratheon", members: ["Robert", "Stannis", "Renly"] },
         { id: 4, code: "TA", name: "Targaryen", members: ["Aerys", "Daenerys", "Viserys"] }
     ]);
 
-    await gotDb
-        .transaction("readwrite", gotDb.houses, async (tx) => {
+    await gotdb
+        .transaction("readwrite", gotdb.houses, async (tx) => {
             let info = [];
 
-            info[0] = await gotDb.houses.toArray();
-            info[1] = await gotDb.houses.where("code").startsWithAnyOf("S", "B").toArray();
+            info = await gotdb.houses.orderBy("id").toArray();
             return info;
     })
     .then((results) => {
@@ -153,7 +153,7 @@ async function storeColors() {
         let allHouses = new DocumentFragment;
 
         // iterate through house data to create a house list
-        results[0].forEach((house) => {
+        results.forEach((house) => {
             // create elements
             let houseList = document.createElement("dl");
             let listTitle = document.createElement("dt");
@@ -188,29 +188,10 @@ async function storeColors() {
         houses.appendChild(allHouses);
     })
     .catch((err) => {
-        console.log("IIFE err" + err);
+        console.log("IIFE err: " + err);
     })
 } ());
 
-function ColorScheme(id, timestamp, firstColor, secondColor) {
-    this.id = id;
-    this.timestamp = timestamp;
-    this.firstColor = firstColor;
-    this.secondColor = secondColor;
-};
-
-
-    /*function consoleLogger(h) {
-        for (let i = 0; i < h.length; i++) {
-            let house = h[i];
-            if (i != h.length -1) {
-                return `{ id: ${Number(i) + 1}, code: "${house.code}", name: "${house.name}", members: "${house.members}" }, `;
-            } else {
-                return `{ id: ${Number(i) + 1}, code: "${house.code}", name: "${house.name}", members: "${house.members}" }`;
-            };
-        };
-    };
-    console.log(data, consoleLogger(data));*/
 /*
 fetch("colors.json")
     .then((response) => response.json())
