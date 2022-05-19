@@ -4,11 +4,7 @@ const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body];
 
-function clearStorage(db) {
-    db.colors.clear();
-}
-
-// GOT DATABASE INITIALIZER
+// DATABASE INITIALIZER
 (async function () {
     "use strict";
     
@@ -58,6 +54,7 @@ function clearStorage(db) {
                 let houseList = document.createElement("dl");
                 let listTitle = document.createElement("dt");
                 // edit title content
+                houseList.classList.add(house.name.toLowerCase());
                 listTitle.classList.add("house");
                 listTitle.innerHTML = house.name;
                 
@@ -103,112 +100,6 @@ function clearStorage(db) {
     })
     .catch((err) => {
         console.log("IIFE err: " + err);
+
     })
 } ());
-
-// GET COLORS *IN INIT F(X), NOT FROM DATABASE
-/*async function getColors() {
-    try {
-        let response = await fetch("https://x-colors.herokuapp.com/api/random?number=2");
-        let data = await response.json();
-        for (let i = 0; i < boxes.length; i++) {
-            let color = data[i].hex;
-            let box = boxes[i];
-            box.style.backgroundColor = color;
-        };
-        console.log("function init", data);
-        return data;
-    } catch(err) {
-        console.log("Color Error", err);
-    };
-};*/
-
-
-// STORE COLORS IN LocalStorage
-/* async function storeFetchedColors() {
-    try {
-        let colors = await getColors();
-        // check property and set value accordingly
-        if (typeof Storage !== "undefined") {
-            var currentColors = window.localStorage.currentColors;
-            window.localStorage.setItem("currentColors", [0, colors[0].hex, colors[1].hex]);
-            console.log("current", currentColors);
-        } else {
-            document.getElementById("result").innerHTML = "Unfortunately your browser does not support web storage and so this button does not work";
-        };
-    } catch(err) {
-        console.log("Storage Error", err);
-    };
-}; */
-
-/*
-fetch("colors.json")
-    .then((response) => response.json())
-    .then(data => {
-        data.forEach(color => {
-            let codes = color.join(", ");
-        });
-    })
-    .catch(err => console.log("Color error!", err)); */
-    /*color => {
-        let bgColor = color[0].rgb.value;
-        const bg = document.querySelector("#main");
-        console.log(bg, bgColor);*/
-
-/*
-fetch("houses.json")
-    .then((response) => response.json())
-    .then((data) => {
-        //create a temp holder to append all the html generated inside the forEach iterator
-        let html = "";
-
-        //the argument "house" passed to the arrow function
-        //holds each item in the array in turn.fetch("houses.json")
-        data.forEach(house => {
-            let family = house.members.join(", ");
-
-            // generate the html snippet for one array item
-            //to be added to the "html" temp holder.
-            let objInfo =
-            `<dl>
-                <dt class="house">${house.name}</dt>
-                <dd class="people">${family}</dd>
-            </dl>`;
-            html += objInfo;
-        });
-
-        //make a reference to the html container where
-        //the info will be displayed.
-        const container = document.querySelector("#container");
-        container.innerHTML = html;
-    })
-    .catch(err => console.log("GoT error!", err));
-    //this only runs if there is an error during the above process
- fetch("houses.json")
-    .then((response) => response.json())
-    .then((data) => {
-        //create a temp holder to append all the html generated inside the forEach iterator
-        let html = "";
-
-        //the argument "house" passed to the arrow function
-        //holds each item in the array in turn.fetch("houses.json")
-        data.forEach(house => {
-            let family = house.members.join(", ");
-
-            // generate the html snippet for one array item
-            //to be added to the "html" temp holder.
-            let objInfo =
-            `<dl>
-                <dt class="house">${house.name}</dt>
-                <dd class="people">${family}</dd>
-            </dl>`;
-            html += objInfo;
-        });
-
-        //make a reference to the html container where
-        //the info will be displayed.
-        const container = document.querySelector("#container");
-        container.innerHTML = html;
-    })
-    .catch(err => console.log("GoT error!", err));
-    //this only runs if there is an error during the above process */
