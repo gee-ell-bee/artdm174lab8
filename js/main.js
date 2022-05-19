@@ -22,7 +22,6 @@ const errorBox = document.getElementById("results");
     const gotResults = await gotData.json();
 
     db.houses.bulkPut(gotResults);
-    console.log("Houses bulkPut", db.houses);
 
     const gotDatabase = await db.houses.orderBy("id").toArray();
 
