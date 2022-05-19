@@ -4,11 +4,6 @@ const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body];
 
-// color buttons
-const newColorsBtn = document.getElementById("new");
-const storeColorsBtn = document.getElementById("store");
-const clearColsBtn = document.getElementById("clearStor");
-
 function clearStorage(db) {
     db.colors.clear();
 }
@@ -23,15 +18,14 @@ function clearStorage(db) {
     // database schema/structure
     db.version(1).stores({
         houses: `++id, &code, name, members`,
-        colors: `hex, rgb, hsl`
+        colors: `++id, hex, rgb, hsl`
     });
 
     const gotData = await fetch("../houses.json");
     const gotResults = await gotData.json();
 
     db.houses.bulkPut(gotResults);
-    console.log("bulkPut", db.houses);
-    clearColsBtn.addEventListener("click", clearStorage(db));
+    console.log("Houses bulkPut", db.houses);
 
     const gotDatabase = await db.houses.orderBy("id").toArray();
 
@@ -39,7 +33,7 @@ function clearStorage(db) {
     const colorResults = await colorData.json();
     const colorArray = [colorResults[0], colorResults[1]];
 
-    console.log("colors", colorArray);
+    console.log("colors data", colorArray);
 
     db.colors.bulkPut(colorArray);
 
@@ -55,7 +49,6 @@ function clearStorage(db) {
             return info;
     })
     .then((results) => {
-        console.log("results", results);
         //temp holder for all the html generated inside the forEach iterator
         let allHouses = new DocumentFragment;
 
@@ -93,19 +86,19 @@ function clearStorage(db) {
             houses.innerHTML = "";
             // add houses lists to section
             houses.appendChild(allHouses);
-            console.log(boxes[0].style.backgroundColor);
 
         // colors function
-        console.log("then colors", results[0]);
+        console.log("full colors list", results[0]);
 
-        for (let i = 0, colors = results[0]; i < boxes.length; i++) {
-            let color = colors[i].hex;
-            let box = boxes[i];
-            box.style.backgroundColor = color;
-        };
-
-        console.log();
-        console.log(boxes[0].style.backgroundColor);
+            // loop thru boxes array
+            for (let i = 0, colors = results[0]; i < boxes.length; i++) {
+                // reverse colors results so most recent additions are at the top
+                results[0].reverse();
+                let color = colors[i].hex;
+                let box = boxes[i];
+                // add diff color to each element
+                box.style.backgroundColor = color;
+            };
         
     })
     .catch((err) => {
