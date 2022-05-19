@@ -3,6 +3,7 @@ let houses = document.getElementById("got");
 const container = document.querySelector("#container");
 const body = document.getElementById("main");
 let boxes = [container, body];
+const errorBox = document.getElementById("results");
 
 // DATABASE INITIALIZER
 (async function () {
@@ -100,6 +101,7 @@ let boxes = [container, body];
     })
     .catch((err) => {
         console.log("IIFE err: " + err);
+        errorBox.innerHTML = "Sorry, there's an error so the page can't load"
 
     })
 } ());
