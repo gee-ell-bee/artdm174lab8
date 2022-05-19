@@ -102,6 +102,5 @@ const errorBox = document.getElementById("results");
     .catch((err) => {
         console.log("IIFE err: " + err);
         errorBox.innerHTML = "Sorry, there's an error so the page can't load"
-
     })
 } ());
