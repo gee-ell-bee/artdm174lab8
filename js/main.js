@@ -18,7 +18,7 @@ const errorBox = document.getElementById("results");
         colors: `++id, hex, rgb, hsl`
     });
 
-    const gotData = await fetch("../houses.json");
+    const gotData = await fetch("houses.json");
     const gotResults = await gotData.json();
 
     db.houses.bulkPut(gotResults);
