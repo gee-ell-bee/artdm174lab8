@@ -86,20 +86,22 @@ const errorBox = document.getElementById("results");
 
         // colors function
         console.log("full colors list", results[0]);
+        
+        results[0].reverse();
 
             // loop thru boxes array
             for (let i = 0, colors = results[0]; i < boxes.length; i++) {
                 // reverse colors results so most recent additions are at the top
-                results[0].reverse();
                 let color = colors[i].hex;
                 let box = boxes[i];
                 // add diff color to each element
                 box.style.backgroundColor = color;
+                console.log("box", i, "color", color);
             };
         
     })
     .catch((err) => {
         console.log("IIFE err: " + err);
-        errorBox.innerHTML = "Sorry, there's an error so the page can't load"
+        errorBox.innerHTML = "Sorry, there's an error so the page can't load";
     })
 } ());
